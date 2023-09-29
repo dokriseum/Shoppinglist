@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../model/ShoppingItem.dart';
+
 class ShoppingListView extends StatefulWidget {
   @override
   _ShoppingListViewState createState() => _ShoppingListViewState();
@@ -8,7 +10,8 @@ class ShoppingListView extends StatefulWidget {
 class _ShoppingListViewState extends State<ShoppingListView> {
   List<ShoppingItem> items = [];
   String newItemName = '';
-  String newItemQuantity = '1'; // Anzahl als Zeichenkette, um die Eingabe zu verarbeiten
+  String newItemQuantity = '1';
+  String newItemImageUrl = ''; // Neues Attribut für die Bild-URL
   final TextEditingController _quantityController = TextEditingController();
 
   @override
@@ -33,7 +36,7 @@ class _ShoppingListViewState extends State<ShoppingListView> {
       ),
       floatingActionButton: FloatingActionButton(
         onPressed: () {
-          _showNewItemDialog();
+          _showNewItemDialog(); // Funktion aufrufen, um das Dialogfeld anzuzeigen
         },
         child: Icon(Icons.add),
       ),
@@ -62,6 +65,12 @@ class _ShoppingListViewState extends State<ShoppingListView> {
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(labelText: 'Anzahl'),
               ),
+              TextField(
+                onChanged: (value) {
+                  newItemImageUrl = value;
+                },
+                decoration: InputDecoration(labelText: 'Bild URL'),
+              ),
             ],
           ),
           actions: <Widget>[
@@ -74,8 +83,8 @@ class _ShoppingListViewState extends State<ShoppingListView> {
             TextButton(
               child: Text('Hinzufügen'),
               onPressed: () {
-                int quantity = int.tryParse(newItemQuantity) ?? 1; // Konvertiere zu einer Zahl oder verwende 1 als Standardwert
-                ShoppingItem newItem = ShoppingItem(name: newItemName, quantity: quantity);
+                int quantity = int.tryParse(newItemQuantity) ?? 1;
+                ShoppingItem newItem = ShoppingItem(name: newItemName, quantity: quantity, imageUrl: newItemImageUrl);
                 setState(() {
                   items.add(newItem);
                 });
@@ -88,12 +97,3 @@ class _ShoppingListViewState extends State<ShoppingListView> {
     );
   }
 }
-
-class ShoppingItem {
-  String name;
-  int quantity;
-
-  ShoppingItem({required this.name, required this.quantity});
-}
-
-//void main() => runApp(MaterialApp(home: ShoppingListView()));
