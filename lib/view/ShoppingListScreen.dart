@@ -32,6 +32,17 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
     });
   }
 
+  void _navigateToEditScreen(BuildContext context, Product product) async {
+    Product editedProduct = await Navigator.push(
+      context,
+      MaterialPageRoute(builder: (context) => EditProductScreen(product: product)),
+    );
+    // Wenn das bearbeitete Produkt nicht null ist, aktualisiere das Produkt in der Liste
+    if (editedProduct != null) {
+      _editProduct(_products.indexOf(product), editedProduct.name, editedProduct.quantity, editedProduct.imageUrl);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -58,26 +69,65 @@ class _ShoppingListScreenState extends State<ShoppingListScreen> {
             child: ListView.builder(
               itemCount: _products.length,
               itemBuilder: (context, index) {
-                return ListTile(
-                  leading: CircleAvatar(
-                    backgroundImage: AssetImage(_products[index].imageUrl),
+                final product = _products[index];
+                return Dismissible(
+                  key: Key(product.name),
+                  background: Container(
+                    color: Colors.red,
+                    child: Icon(Icons.delete, color: Colors.white),
+                    alignment: Alignment.centerRight,
+                    padding: EdgeInsets.only(right: 20.0),
                   ),
-                  title: Text(_products[index].name),
-                  subtitle: Text('Menge: ${_products[index].quantity}'),
-                  onTap: () async {
-                    // Hier kannst du die Bearbeitungsseite aufrufen und die bearbeiteten Daten empfangen
-                    Product editedProduct = await Navigator.push(
-                      context,
-                      MaterialPageRoute(builder: (context) => EditProductScreen(product: _products[index])),
-                    );
-                    // Wenn das bearbeitete Produkt nicht null ist, aktualisiere das Produkt in der Liste
-                    if (editedProduct != null) {
-                      _editProduct(index, editedProduct.name, editedProduct.quantity, editedProduct.imageUrl);
-                    }
-                  }
+                  secondaryBackground: Container(
+                    color: Colors.green,
+                    padding: EdgeInsets.symmetric(horizontal: 20.0),
+                    alignment: Alignment.centerRight,
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            _navigateToEditScreen(context, product);
+                          },
+                          child: Icon(Icons.edit, color: Colors.white),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              // Wenn das Produkt gelöscht werden soll
+                              _products.removeAt(index);
+                            });
+                          },
+                          child: Icon(Icons.delete, color: Colors.white),
+                        ),
+                      ],
+                    ),
+                  ),
+                  onDismissed: (direction) {
+                    setState(() {
+                      if (direction == DismissDirection.endToStart) {
+                        // Wenn das Produkt gelöscht werden soll
+                        _products.removeAt(index);
+                      } else if (direction == DismissDirection.startToEnd) {
+                        // Wenn das Produkt bearbeitet werden soll
+                        _navigateToEditScreen(context, product);
+                      }
+                    });
+                  },
+                  child: ListTile(
+                    leading: CircleAvatar(
+                      backgroundImage: AssetImage(product.imageUrl),
+                    ),
+                    title: Text(product.name),
+                    subtitle: Text('Menge: ${product.quantity}'),
+                    onTap: () {
+                      // Hier kannst du zusätzliche Aktionen ausführen, wenn der ListTile getippt wird
+                    },
+                  ),
                 );
               },
             ),
+
           );
         },
       ),
