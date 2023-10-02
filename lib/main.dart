@@ -1,13 +1,12 @@
 import 'package:flutter/material.dart';
-import 'package:track_sync_shoplist/view/ShoppingListScreenView.dart';
-import 'package:track_sync_shoplist/view/ShoppingListView.dart';
 
-import 'view/MyApp.dart';
+import 'view/widget/App.dart';
+
 
 void main() {
   //runApp(const MyApp());
   //runApp(MaterialApp(home: ShoppingListView()));
-  runApp(ShoppingListScreenView());
+  runApp(App());
 }
 
 

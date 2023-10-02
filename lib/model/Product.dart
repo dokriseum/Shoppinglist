@@ -1,7 +1,7 @@
 class Product {
-  final String name;
-  final int quantity;
-  final String imageUrl;
+  String name;
+  int quantity;
+  String image;
 
-  Product(this.name, this.quantity, this.imageUrl);
+  Product(this.name, this.quantity, this.image);
 }
